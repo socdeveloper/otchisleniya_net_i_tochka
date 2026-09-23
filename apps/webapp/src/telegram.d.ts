@@ -3,6 +3,7 @@ interface TelegramWebApp {
   ready(): void
   expand(): void
   initData: string
+  HapticFeedback?: { selectionChanged(): void }
 }
 
 interface Window {

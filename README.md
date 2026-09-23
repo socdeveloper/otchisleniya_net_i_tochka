@@ -17,6 +17,7 @@ Quick Tunnel предназначен только для разработки: 
 
 - [Контекст проекта](CONTEXT.md)
 - [ADR: модульный монолит](docs/adr/0001-modular-monolith.md)
+- [Московский каталог учебных заведений: данные и источники](docs/catalogs/moscow-institutions.md)
 
 ## Состав каркаса
 
