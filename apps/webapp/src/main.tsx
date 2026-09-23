@@ -4,6 +4,8 @@ import { init, miniApp, themeParams, viewport } from '@tma.js/sdk-react'
 import { AppRoot, Button, Cell, Section } from '@telegram-apps/telegram-ui'
 import '@telegram-apps/telegram-ui/dist/styles.css'
 import { HomeMenu } from './HomeMenu'
+import { SupportChat } from './SupportChat'
+import { SupportOperator } from './SupportOperator'
 import { InstitutionType, uniqueInstitutions } from './data/institutions'
 import './style.css'
 
@@ -40,6 +42,7 @@ function App() {
   const [course, setCourse] = useState<number | null>(null)
   const [role, setRole] = useState<Role | null>(null)
   const [suggestion, setSuggestion] = useState(false)
+  const [supportOpen, setSupportOpen] = useState(false)
 
   telegram?.expand()
   const visibleInstitutions = useMemo(() => {
@@ -56,6 +59,9 @@ function App() {
     if (current > 0) setStep(steps[current - 1])
   }
   const haptic = () => telegram?.HapticFeedback?.selectionChanged()
+  const openSupport = () => {
+    setSupportOpen(true)
+  }
   const selectInstitution = (name: string) => {
     haptic()
     setInstitution(name)
@@ -66,6 +72,8 @@ function App() {
 
   return (
     <AppRoot appearance={telegram?.colorScheme ?? 'light'}>
+      {supportOpen && telegram?.initData && <SupportChat initData={telegram.initData} onClose={() => setSupportOpen(false)} />}
+      {supportOpen && !telegram?.initData && <div className="support-login"><button onClick={() => setSupportOpen(false)}>‹ Назад</button><h2>Чат поддержки</h2><p>Откройте приложение через Telegram, чтобы безопасно подключиться к чату.</p></div>}
       <main className="screen">
         {step !== 'welcome' && step !== 'home' && (
           <header className="topbar">
@@ -144,12 +152,14 @@ function App() {
           </>
         )}
 
-        {step === 'home' && institution && studyLevel && course && role && (
-          <HomeMenu institution={institution} institutionType={institutionType} studyLevel={studyLevel} course={course} role={role} />
+        {!supportOpen && step === 'home' && institution && studyLevel && course && role && (
+          <HomeMenu institution={institution} institutionType={institutionType} studyLevel={studyLevel} course={course} role={role} onOpenSupport={openSupport} />
         )}
       </main>
     </AppRoot>
   )
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<React.StrictMode><App /></React.StrictMode>)
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>{location.pathname === '/support-operator' ? <SupportOperator /> : <App />}</React.StrictMode>,
+)

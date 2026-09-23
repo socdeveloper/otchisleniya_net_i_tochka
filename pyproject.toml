@@ -16,6 +16,8 @@ dependencies = [
   "alembic>=1.15,<2",
   "redis>=5,<7",
   "pydantic-settings>=2.8,<3",
+  "aiobotocore>=2.21,<3",
+  "python-multipart>=0.0.20,<1",
 ]
 
 [project.optional-dependencies]

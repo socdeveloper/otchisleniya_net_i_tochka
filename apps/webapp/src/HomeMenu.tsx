@@ -11,6 +11,7 @@ interface HomeMenuProps {
   studyLevel: string
   course: number
   role: Role
+  onOpenSupport: () => void
 }
 
 const guideSteps = [
@@ -20,7 +21,7 @@ const guideSteps = [
   'После завершения подтвердите результат. Если возникнет проблема — обратитесь в поддержку.',
 ]
 
-export function HomeMenu({ institution, institutionType, studyLevel, course, role }: HomeMenuProps) {
+export function HomeMenu({ institution, institutionType, studyLevel, course, role, onOpenSupport }: HomeMenuProps) {
   const [action, setAction] = useState<Action>(null)
   const [servicesOpen, setServicesOpen] = useState(false)
   const [guideOpen, setGuideOpen] = useState(false)
@@ -108,8 +109,8 @@ export function HomeMenu({ institution, institutionType, studyLevel, course, rol
       {supportOpen && (
         <div className="support-panel" aria-live="polite">
           <strong>Мы поможем разобраться</strong>
-          <p>Поддержка поможет с заказом, оплатой или работой сервиса. Связь с командой появится в следующем обновлении.</p>
-          <button onClick={() => setSupportOpen(false)}>Понятно</button>
+          <p>Напишите команде прямо здесь. Можно отправить текст, фотографию, документ или голосовое сообщение.</p>
+          <button className="support-open-button" onClick={onOpenSupport}>Открыть чат поддержки <span>›</span></button>
         </div>
       )}
 
