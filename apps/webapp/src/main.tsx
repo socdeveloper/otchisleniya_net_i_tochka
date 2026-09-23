@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { init, miniApp, themeParams, viewport } from '@tma.js/sdk-react'
 import { AppRoot, Button, Cell, Section } from '@telegram-apps/telegram-ui'
 import '@telegram-apps/telegram-ui/dist/styles.css'
+import { HomeMenu } from './HomeMenu'
 import { InstitutionType, uniqueInstitutions } from './data/institutions'
 import './style.css'
 
@@ -19,7 +20,7 @@ if (window.Telegram?.WebApp) {
 
 type Role = 'client' | 'performer'
 type StudyLevel = 'Бакалавриат' | 'Специалитет' | 'Магистратура' | 'Среднее профессиональное'
-type Step = 'welcome' | 'institution' | 'level' | 'course' | 'role' | 'done'
+type Step = 'welcome' | 'institution' | 'level' | 'course' | 'role' | 'home'
 
 const steps: Step[] = ['welcome', 'institution', 'level', 'course', 'role']
 const levels: { title: StudyLevel; subtitle: string; icon: string; institutionType: InstitutionType }[] = [
@@ -61,12 +62,12 @@ function App() {
     setStep('level')
   }
   const selectLevel = (value: StudyLevel) => { haptic(); setStudyLevel(value); setStep('course') }
-  const progressIndex = step === 'welcome' ? 0 : step === 'done' ? 4 : steps.indexOf(step)
+  const progressIndex = step === 'welcome' ? 0 : step === 'home' ? 4 : steps.indexOf(step)
 
   return (
     <AppRoot appearance={telegram?.colorScheme ?? 'light'}>
       <main className="screen">
-        {step !== 'welcome' && step !== 'done' && (
+        {step !== 'welcome' && step !== 'home' && (
           <header className="topbar">
             <button className="back-button" onClick={goBack} aria-label="Назад">‹</button>
             <div className="progress" aria-label={`Шаг ${Math.max(progressIndex, 1)} из 4`}>
@@ -139,12 +140,12 @@ function App() {
               <button className={role === 'performer' ? 'role-card performer selected' : 'role-card performer'} onClick={() => { haptic(); setRole('performer') }}><span className="role-emoji">💼</span><span className="role-arrow">↗</span><strong>Стать исполнителем</strong><p>Разместить услуги и получать заказы от студентов</p><span className="role-foot">Я предлагаю услуги <b>→</b></span></button>
             </div>
             <div className="profile-preview"><span className="preview-avatar">{role === 'performer' ? '💼' : '🎓'}</span><div><small>ВАШ ПРОФИЛЬ</small><strong>{institution || 'Ваше заведение'} · {course ?? '—'} курс</strong></div><span className="verified-badge">✓</span></div>
-            <div className="sticky-action"><Button size="l" stretched disabled={!role} onClick={() => setStep('done')}>Начать <span className="button-arrow">→</span></Button></div>
+            <div className="sticky-action"><Button size="l" stretched disabled={!role} onClick={() => setStep('home')}>Открыть меню <span className="button-arrow">→</span></Button></div>
           </>
         )}
 
-        {step === 'done' && (
-          <div className="done-screen"><div className="done-mark">✓</div><div className="brand-pill"><span className="brand-dot" /> ПРОФИЛЬ СОЗДАН</div><h1>{role === 'performer' ? 'Добро пожаловать, исполнитель!' : 'Всё готово!'}</h1><p className="muted">{institution} · {studyLevel} · {course} курс</p><div className="done-card"><span>{role === 'performer' ? '💼' : '✨'}</span><div><strong>{role === 'performer' ? 'Настройте профиль исполнителя' : 'Создайте первый заказ'}</strong><small>{role === 'performer' ? 'Добавьте категории и цены «от»' : 'Опишите задачу и выберите специалиста'}</small></div><span className="row-chevron">›</span></div><Button size="l" stretched onClick={() => { setStep('welcome'); setCourse(null); setRole(null) }}>Перейти в сервис</Button><p className="terms">Пока это демо онбординга. Данные ещё не сохраняются.</p></div>
+        {step === 'home' && institution && studyLevel && course && role && (
+          <HomeMenu institution={institution} institutionType={institutionType} studyLevel={studyLevel} course={course} role={role} />
         )}
       </main>
     </AppRoot>
